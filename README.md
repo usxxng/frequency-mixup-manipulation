@@ -15,9 +15,9 @@
 1. Nvidia driver, CUDA toolkit 11.0, install Anaconda.
 
 2. Install pytorch
-
+'''
     conda install pytorch torchvision cudatoolkit=11.0 -c pytorch
-
+'''
 ## Dataset
 
 
