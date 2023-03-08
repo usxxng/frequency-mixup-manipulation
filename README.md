@@ -16,7 +16,7 @@
 
 2. Install pytorch
 
-'''conda install pytorch torchvision cudatoolkit=11.0 -c pytorch'''
+```conda install pytorch torchvision cudatoolkit=11.0 -c pytorch```
 
 ## Dataset
 
