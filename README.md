@@ -3,7 +3,7 @@
 > MICCAI 2023 (Submitted)
 
 ## Overview
-
+![architecture](./overall_framework.png)
 
 ## Motivation
 
