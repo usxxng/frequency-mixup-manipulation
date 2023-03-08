@@ -63,12 +63,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 print(torch.cuda.is_available())
 
-data_path = "/DataRead/ysshin/task/adni1_data_adcn.npy"
-label_path ="/DataRead/ysshin/task/adni1_label_adcn.npy"
-# data_path = "/home/ubuntu/ysshin/MIA_code/data/adni1_data_adcn.npy"
-# label_path = "/home/ubuntu/ysshin/MIA_code/data/adni1_label_adcn.npy"
+data_path = "/task/adni1_data_adcn.npy"
+label_path ="/task/adni1_label_adcn.npy"
 
-#dataset = dataset.MyDataset(data_path = data_path, label_path= label_path, transform=None)
+
 dataset = dataset.FFTDataset(data_path=data_path, label_path=label_path, transform=intensity_transform())
 
 
@@ -84,7 +82,6 @@ val_loader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, dr
 
 print('data loading done...\n')
 net = fft_model.Net(dropout=0.5)
-#net = resnet.FNet34()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 net.to(device)
@@ -100,11 +97,7 @@ intensity_classifier = nn.Sequential(
 ).to(device)
 
 
-#optimizer = torch.optim.Adam(net.parameters(), lr=args.init_lr)
 optimizer = torch.optim.Adam(list(intensity_classifier.parameters()) + list(net.parameters()), lr=args.init_lr)
-#scheduler = CosineAnnealingWarmRestarts(optimizer, args.epochs - 1)
-#scheduler = CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
-#scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, min_lr=1e-8)
 loss_function = nn.CrossEntropyLoss()
 
 
@@ -163,10 +156,6 @@ for epoch in range(0, args.epochs):
     tqdm.write(f'Epoch {epoch:03d}: train_loss = {train_loss:.4f} , train_acc = {train_acc:.4f}')
     tqdm.write(f'val_loss = {val_loss: .4f} , val_acc = {val_acc:.4f}')
 
-    # if val_lb_loss < best_loss:
-    #     print('saving model...')
-    #     best_loss = val_lb_loss
-    #     torch.save(net.state_dict(), "models/{}.pt".format(args.model_name))
     if val_acc > best_acc:
         tqdm.write(f'Saving model... Selection: val_acc')
         best_acc = val_acc
