@@ -35,18 +35,14 @@ print(device)
 
 target = 'adni3'
 
-target_path = "/DataRead/ysshin/task/data_8_2/{}_data_adcn_82_test.npy".format(target)
-trg_label_path = "/DataRead/ysshin/task/data_8_2/{}_label_adcn_82_test.npy".format(target)
-# target_path = "/home/ubuntu/ysshin/MIA_code/data/data_8_2/adni2_data_adcn_82_test.npy"
-# trg_label_path = "/home/ubuntu/ysshin/MIA_code/data/data_8_2/adni2_label_adcn_82_test.npy"
+target_path = "/task/data_8_2/{}_data_adcn_82_test.npy".format(target)
+trg_label_path = "/task/data_8_2/{}_label_adcn_82_test.npy".format(target)
 
 dataset = dataset.MyDataset(data_path = target_path, label_path = trg_label_path, transform=None)
 dataloader_target = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)     
 
-#MODEL_FILE = 'models/source_intra_fft_adni1_acc.pt'
-MODEL_FILE = 'models/ablation/no_intensity/trained_no_intensity_2adni3_auc_ep59.pt'
+MODEL_FILE = 'models/source_intra_fft_adni1_acc.pt'
 
-#net = Net(dropout=0.5)
 net = fft_model.Net(dropout=0.5)
 net.to(device)
 net.load_state_dict(torch.load(MODEL_FILE))
