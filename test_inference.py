@@ -55,15 +55,14 @@ print(device)
 
 target = args.test_target
 
-target_path = "/DataRead/ysshin/task/data_8_2/{}_data_adcn_82_test.npy".format(target)
-trg_label_path = "/DataRead/ysshin/task/data_8_2/{}_label_adcn_82_test.npy".format(target)
+target_path = "/task/data_8_2/{}_data_adcn_82_test.npy".format(target)
+trg_label_path = "/task/data_8_2/{}_label_adcn_82_test.npy".format(target)
 
 dataset = dataset.MyDataset(data_path = target_path, label_path = trg_label_path, transform=None)
 dataloader_target = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 MODEL_FILE = 'models/{}.pt'.format(args.model_name)
 
-#net = Net(dropout=0.5)
 net = fft_model.Net(dropout=0.5)
 net.to(device)
 net.load_state_dict(torch.load(MODEL_FILE))
