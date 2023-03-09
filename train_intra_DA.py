@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 import torchvision.transforms as transforms
 import torch.optim as optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR, CosineAnnealingWarmRestarts
 import numpy as np
 import os
 from time import time
@@ -63,12 +62,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 print(torch.cuda.is_available())
 
-data_path = "/DataRead/ysshin/task/adni1_data_adcn.npy"
-label_path ="/DataRead/ysshin/task/adni1_label_adcn.npy"
-# data_path = "/home/ubuntu/ysshin/MIA_code/data/adni1_data_adcn.npy"
-# label_path = "/home/ubuntu/ysshin/MIA_code/data/adni1_label_adcn.npy"
+data_path = "/task/adni1_data_adcn.npy"
+label_path ="/task/adni1_label_adcn.npy"
 
-#dataset = dataset.MyDataset(data_path = data_path, label_path= label_path, transform=None)
 dataset = dataset.FFTDataset(data_path=data_path, label_path=label_path, transform=intensity_transform())
 
 
@@ -84,7 +80,6 @@ val_loader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, dr
 
 print('data loading done...\n')
 net = fft_model.Net(dropout=0.5)
-#net = resnet.FNet34()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 net.to(device)
@@ -100,13 +95,8 @@ intensity_classifier = nn.Sequential(
 ).to(device)
 
 
-#optimizer = torch.optim.Adam(net.parameters(), lr=args.init_lr)
 optimizer = torch.optim.Adam(list(intensity_classifier.parameters()) + list(net.parameters()), lr=args.init_lr)
-#scheduler = CosineAnnealingWarmRestarts(optimizer, args.epochs - 1)
-#scheduler = CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
-#scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, min_lr=1e-8)
 loss_function = nn.CrossEntropyLoss()
-
 
 def do_epoch(model, dataloader, criterion, optim = None):
 
@@ -163,10 +153,7 @@ for epoch in range(0, args.epochs):
     tqdm.write(f'Epoch {epoch:03d}: train_loss = {train_loss:.4f} , train_acc = {train_acc:.4f}')
     tqdm.write(f'val_loss = {val_loss: .4f} , val_acc = {val_acc:.4f}')
 
-    # if val_lb_loss < best_loss:
-    #     print('saving model...')
-    #     best_loss = val_lb_loss
-    #     torch.save(net.state_dict(), "models/{}.pt".format(args.model_name))
+
     if val_acc > best_acc:
         tqdm.write(f'Saving model... Selection: val_acc')
         best_acc = val_acc
@@ -176,7 +163,6 @@ for epoch in range(0, args.epochs):
         best_loss = val_loss
         torch.save(net.state_dict(), "models/{}_loss.pt".format(args.model_name))
 
-    #scheduler.step(val_loss)
 
 correct = 0
 total = 0
@@ -194,22 +180,3 @@ with torch.no_grad():
         correct += (predicted == labels).sum().item()
 
 print('Accuracy on the val loss: %d %%' % (100 * correct / total))
-
-
-
-correct2 = 0
-total2 = 0
-net.load_state_dict(torch.load("models/{}_acc.pt".format(args.model_name)))
-net.eval()
-with torch.no_grad():
-    for images, labels, _ in tqdm(val_loader):
-        images = minmax_scaler(images)
-        images = images.to(device).float()
-        labels = labels.to(device)
-
-        outputs = net(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total2 += labels.size(0)
-        correct2 += (predicted == labels).sum().item()
-
-print('Accuracy on the val acc: %d %%' % (100 * correct2 / total2))
