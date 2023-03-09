@@ -13,7 +13,7 @@ from tqdm import tqdm
 import model
 from utils import loop_iterable, set_requires_grad
 from utils import GradientReversal, loop_iterable
-from fourier import fft_mixup, fft_amp_mix, mixup, fda, fft_amp_replace, DynamicFrequencySearch, fft_mixup_block, fft_mixup_aug
+from fourier import fft_mixup, fft_amp_mix
 from sklearn.metrics import confusion_matrix, roc_auc_score
 from dataset import minmax_scaler
 import dataset
@@ -66,7 +66,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 print(torch.cuda.is_available())
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#MODEL_FILE = 'models/ablation/no_intensity/{}_no_intensity_acc.pt'.format(args.source)
 MODEL_FILE = 'models/source_intra_fft_{}_acc.pt'.format(args.source)
 
 net = fft_model.Net(dropout=0.5)
@@ -85,10 +84,10 @@ discriminator = nn.Sequential(
 optimizer = torch.optim.Adam(list(discriminator.parameters()) + list(net.parameters()), lr=args.init_lr)
 half_batch = args.batch_size // 2
 
-source_path = "/DataRead/ysshin/task/{}_data_adcn.npy".format(args.source)
-src_label_path ="/DataRead/ysshin/task/{}_label_adcn.npy".format(args.source)
-target_path = "/DataRead/ysshin/task/data_8_2/{}_data_adcn_82.npy".format(args.target)
-trg_label_path ="/DataRead/ysshin/task/data_8_2/{}_label_adcn_82.npy".format(args.target)
+source_path = "/task/{}_data_adcn.npy".format(args.source)
+src_label_path ="/task/{}_label_adcn.npy".format(args.source)
+target_path = "/task/data_8_2/{}_data_adcn_82.npy".format(args.target)
+trg_label_path ="/task/data_8_2/{}_label_adcn_82.npy".format(args.target)
 
 
 total_dataset = dataset.MyDataset(data_path=source_path, label_path=src_label_path, transform=None)
@@ -117,10 +116,8 @@ def do_epoch(model, source_loader, target_loader, optim=None):
     y_pred = []
 
     for (source_x, source_labels), (target_x, _) in tqdm(batches, leave=False, total=n_batches):
-        target_f = mixup(source_x, target_x, 1)
-        #target_f = fda(source_x, target_x, 0.09)
-
-        #target_f = fft_mixup(source_x, target_x)
+        
+        target_f = fft_mixup(source_x, target_x)
 
         source_x = minmax_scaler(source_x)
         target_f = minmax_scaler(target_f)
@@ -190,5 +187,3 @@ for epoch in range(0, args.epochs):
     #     tqdm.write(f'Saving model... Selection: val_loss')
     #     best_loss = val_loss
     #     torch.save(net.state_dict(), "models/{}_loss.pt".format(args.model_name))
-
-    #scheduler.step(val_auc)
