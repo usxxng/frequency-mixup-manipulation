@@ -184,7 +184,7 @@ with torch.no_grad():
 
 print('Accuracy on the val loss: %d %%' % (100 * correct / total))
 
-
+ 
 
 correct2 = 0
 total2 = 0
