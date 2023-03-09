@@ -27,6 +27,12 @@ Unsupervised Domain Adaptation (UDA), which transfers the learned knowledge from
 
 When using Terminal, directly execute the code below after setting the path
 
+	python train.py --kernel-type model_name --out-dim 4 --data-folder images/ --enet-type preconv_seven --n-epochs 200 --init-lr 4e-5 --batch-size 32 --k-fold 0 --image-size 256 --CUDA_VISIBLE_DEVICES 0
+
+## Training
+
+When using Terminal, directly execute the code below after setting the path
+
 Intra-Domain Adaptation Step
 
 ```python train_intra_DA.py --gpu 0 --model_name custom_name --batch_size 4 --init_lr 1e-4 --epochs 50```
