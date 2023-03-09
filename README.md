@@ -20,14 +20,8 @@ Unsupervised Domain Adaptation (UDA), which transfers the learned knowledge from
 
 3. Install various necessary packages
 
-```pip install scikit-learn numpy torchio tqdm
+```pip install scikit-learn numpy torchio tqdm```
 
-
-## Training
-
-When using Terminal, directly execute the code below after setting the path
-
-	python train.py --kernel-type model_name --out-dim 4 --data-folder images/ --enet-type preconv_seven --n-epochs 200 --init-lr 4e-5 --batch-size 32 --k-fold 0 --image-size 256 --CUDA_VISIBLE_DEVICES 0
 
 ## Training
 
