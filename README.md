@@ -1,6 +1,6 @@
 # Frequency Mixup Manipulation based Unsupervised Domain Adaptation for Brain Disease Identification
 
-[ACPR 2023 Oral Accepted]
+## [ACPR 2023 Oral Accepted]
 ## Overview
 ![architecture](./framework.png)
 
